@@ -8,7 +8,6 @@ USE HolidayFun;
 CREATE TABLE Resort (
 	resortid INT PRIMARY KEY NOT NULL,
 	name VARCHAR(100) NOT NULL,
-	address VARCHAR(255) NOT NULL,
 		street VARCHAR(100) NOT NULL,
 		suburb VARCHAR(100) NOT NULL,
 		state VARCHAR(50) NOT NULL,
@@ -108,6 +107,7 @@ CREATE TABLE AdvertisedOffer (
 	description VARCHAR(255),
 	offerType VARCHAR(50) NOT NULL,
 	startDate DATE NOT NULL,
+    endDate DATE NOT NULL,
 	advertisedPrice DECIMAL(10,2) NOT NULL,
 	advertisedCurrency VARCHAR(10) NOT NULL,
 	inclusions VARCHAR(255),
@@ -127,7 +127,7 @@ CREATE TABLE AdvertisedOffer (
     
 	FOREIGN KEY (employeeId) REFERENCES Employee(employeeId)
 		ON UPDATE CASCADE
-		ON DELETE CASCADE,
+		ON DELETE NO ACTION,
 
 	FOREIGN KEY (serviceItemId) REFERENCES ServiceItem(serviceItemId)
 		ON UPDATE CASCADE
@@ -241,7 +241,7 @@ CREATE TABLE Discount (
     amount DECIMAL(10,2),
     percentage DECIMAL(5,2),
     reason VARCHAR(255),
-    headOfficeAuthorisation BOOLEAN,
+    headOfficeAuthorisation BIT,
     appliedDateandTime DATETIME NOT NULL,
     
     FOREIGN KEY (reservationNo) REFERENCES Reservation(reservationNo)
