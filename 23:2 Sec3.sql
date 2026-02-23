@@ -1,0 +1,257 @@
+DROP DATABASE HolidayFun;
+
+CREATE DATABASE HolidayFun;
+
+USE HolidayFun;
+
+
+CREATE TABLE Resort (
+	resortid INT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL,
+	address VARCHAR(255),
+		street VARCHAR(255),
+		suburb VARCHAR(255),
+		state VARCHAR(50),
+		postcode VARCHAR(10),
+	country VARCHAR (255),
+		phoneNumber VARCHAR(30),
+        emailAddress VARCHAR(255),
+        description VARCHAR(255)
+	);
+        
+CREATE TABLE FacilityType (
+	id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    capacity INT
+	); 
+    
+CREATE TABLE Facility (
+	facility INT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL,
+	description CHAR(255),
+	status VARCHAR(255),
+    
+    resortid INT,
+    facilityTypeId INT,
+    
+    FOREIGN KEY (resortid) REFERENCES Resort(resortid),
+    FOREIGN KEY (facility_type_id) REFERENCES FacilityType(id)
+	);
+
+CREATE TABLE ServiceCategory (
+	code INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    type VARCHAR(255)
+	);
+
+CREATE TABLE ServiceItem (
+	id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(255),
+    restrictions VARCHAR(255),
+    status VARCHAR(50),
+    availableTimes DATETIME NOT NULL,
+    baseCost DECIMAL(10,2),
+    baseCurrency CHAR(3),
+    capacity INT,
+    
+    categoryCode INT,
+    FOREIGN KEY (categoryCode) REFERENCES ServiceCategory(code)
+		ON UPDATE CASCADE
+        ON DELETE NO ACTION
+	);
+
+CREATE TABLE Package (
+	packageId INT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	description VARCHAR(255)
+);
+
+CREATE TABLE PackageService (
+	packageId INT,
+	serviceItemId INT,
+    
+    PRIMARY KEY(packageId, serviceItemId),
+    
+	FOREIGN KEY (packageId) REFERENCES Package(packageId)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+
+	FOREIGN KEY (serviceItemId) REFERENCES ServiceItem(serviceItemId)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+);
+
+CREATE TABLE Employee(
+	eid INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    role VARCHAR(100),
+    number VARCHAR(30),
+    email VARCHAR(255),
+    location VARCHAR(255),
+    authorisationLevel INT
+    );
+    
+CREATE TABLE AdvertisedOffer (
+	id INT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	description VARCHAR(255),
+	offerType VARCHAR(100),
+	startDate DATE,
+	advertisedPrice DECIMAL(10,2),
+	advertisedCurrency CHAR(3),
+	inclusions VARCHAR(255),
+	exclusions VARCHAR(255),
+	status VARCHAR(50),
+	gracePeriod INT,
+    
+	employeeId INT,
+	serviceItemId INT NULL,
+	packageId INT NULL,
+    
+    CHECK(
+		(serviceItemId IS NOT NULL AND packageId IS NULL)
+		OR
+		(serviceItemId IS NULL AND packageId IS NOT NULL)
+    ),
+    
+	FOREIGN KEY (eid) REFERENCES Employee(eid)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+
+	FOREIGN KEY (serviceItemId) REFERENCES ServiceItem(id)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+
+	FOREIGN KEY (packageId) REFERENCES Package(packageId)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+);
+
+CREATE TABLE Customer (
+	id INT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	address VARCHAR(255),
+	contact VARCHAR(255),
+	number VARCHAR(13),
+	email VARCHAR(255)
+    );
+    
+CREATE TABLE Reservation (
+	reservationNo INT PRIMARY KEY,
+    customerID INT NOT NULL,
+    paymentInfo VARCHAR(255), 
+    
+    FOREIGN KEY (customerId) REFERENCES Customer(customerId)
+		ON UPDATE CASCADE
+		ON DELETE NO ACTION,
+        
+	FOREIGN KEY (PackageService) REFERENCES AdvertisedServicePackage(id)
+    );
+    
+CREATE TABLE Booking (
+	bookingId INT PRIMARY KEY,
+    reservationNo INT NOT NULL,
+    offerId INT NOT NULL,
+    quantity INT NOT NULL,
+    startDate INT NOT NULL,
+    endDate DATE NOT NULL,
+    
+    FOREIGN KEY (reservationNo) REFERENCES Reservation(reservationNo)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+    
+    FOREIGN KEY (offerId) REFERENCES AdvertisedOffer(offerId)
+		ON UPDATE CASCADE
+		ON DELETE NO ACTION
+);
+
+CREATE TABLE FacilityBooking (
+	facilityBookingId INT PRIMARY KEY,
+	bookingId INT NOT NULL, 
+	facilityId INT NOT NULL,
+	startDateTime DATETIME NOT NULL,
+	endDateTime DATETIME NOT NULL,
+
+	FOREIGN KEY (bookingId) REFERENCES Booking(bookingId)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE,
+        
+	FOREIGN KEY (facilityId) REFERENCES Facility(facilityId)
+		ON UPDATE CASCADE
+		ON DELETE NO ACTION
+    );
+    
+CREATE TABLE Guest (
+	guestId INT PRIMARY KEY,
+	reservationNo INT NOT NULL,
+	name VARCHAR(255),
+	street VARCHAR(255),
+	suburb VARCHAR(255),
+	state VARCHAR(50),
+	postcode VARCHAR(10),
+	contactNumber VARCHAR(30),
+	email VARCHAR(255),
+
+	FOREIGN KEY (reservationNo) REFERENCES Reservation(reservationNo)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+);
+
+CREATE TABLE Charge (
+	chargeId INT PRIMARY KEY,
+	bookingId INT NOT NULL,
+	dateAndTime DATETIME NOT NULL,
+	description VARCHAR(255),
+	amount DECIMAL(10,2) NOT NULL,
+	currency CHAR(3) NOT NULL,
+	chargeType VARCHAR(50),
+	source VARCHAR(50),
+    
+	FOREIGN KEY (customerId) REFERENCES Customer(customerId)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+);
+    
+CREATE TABLE Payment (
+	paymentId INT PRIMARY KEY,
+	paymentDateAndTime DATE,
+	amount DECIMAL(10,2) NOT NULL,
+	currency CHAR(3) NOT NULL,
+	method VARCHAR(50),
+    
+    FOREIGN KEY (reservationNo) REFERENCES Reservation(reservationNo)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+);
+
+CREATE TABLE Discount (
+	discountId INT PRIMARY KEY,
+    reservationNo INT NOT NULL,
+    amount DECIMAL(10,2) NULL,
+    percentage DECIMAL(5,2) NULL,
+    reason VARCHAR(255),
+    headOfficeAuthorisation VARCHAR(255),
+    appliedDateandTime DATETIME NOT NULL,
+    
+    FOREIGN KEY (reservationNo) REFERENCES Reservation(reservationNo)
+		ON UPDATE CASCADE
+		ON DELETE CASCADE
+);
+    
+
+
+
+
+
+
+
+   
+
+    
+
+
+
+
