@@ -253,7 +253,7 @@ CREATE OR ALTER PROCEDURE validateCustomer @customerId INT
 AS
 BEGIN
 -- This section validates user input before making a reservation
-	SET COCOUNT ON;
+	SET NOCOUNT ON;
     DECLARE 
 	@name VARCHAR(100),
 	@address VARCHAR(100),
