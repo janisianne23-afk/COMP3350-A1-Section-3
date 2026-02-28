@@ -246,3 +246,21 @@ CREATE TABLE Discount (
         ON UPDATE CASCADE
         ON DELETE NO ACTION  -- FIXED: NO ACTION
 );
+
+-- ServiceBookingsType
+CREATE TYPE ServiceBookingsType AS TABLE (
+    servicePackageId INT,
+    quantity INT,
+    startDate DATE,
+    endDate DATE
+);
+GO
+
+-- GuestsType
+CREATE TYPE GuestsType AS TABLE (
+    name NVARCHAR(255),
+    address NVARCHAR(255),
+    phoneNumber NVARCHAR(50),
+    email NVARCHAR(255)
+);
+GO
