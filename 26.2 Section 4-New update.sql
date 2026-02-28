@@ -1,6 +1,8 @@
-DROP DATABASE HolidayFun;
-
+IF DB_ID('HolidayFun') IS NOT NULL
+    DROP DATABASE HolidayFun;
+GO
 CREATE DATABASE HolidayFun;
+GO
 
 USE HolidayFun;
 
